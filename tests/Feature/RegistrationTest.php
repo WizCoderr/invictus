@@ -57,38 +57,44 @@ class RegistrationTest extends TestCase
             ->assertJsonPath('order.id', 'order_123')
             ->assertJsonPath('order.key', 'rzp_test_key');
 
-        // ₹1,200 + 18% GST, in paise.
-        Http::assertSent(fn ($request) => $request['amount'] === 141600 && $request['currency'] === 'INR');
+        // ₹1,200 + 18% GST, in paise, with the form carried in the notes.
+        Http::assertSent(fn ($request) => $request['amount'] === 141600 && $request['currency'] === 'INR'
+            && $request['notes']['phone'] === '+919876543210' && ! isset($request['notes']['invited_by']));
 
-        $registration = Registration::sole();
-        $this->assertSame('+919876543210', $registration->phone);
-        $this->assertNull($registration->invited_by);
-        $this->assertSame('order_123', $registration->razorpay_order_id);
-        $this->assertSame(Registration::PAYMENT_CREATED, $registration->payment_status);
+        // Nothing is saved until the payment comes through.
+        $this->assertSame(0, Registration::count());
     }
 
-    public function test_payment_is_confirmed_only_with_a_genuine_signature(): void
+    public function test_registration_is_saved_only_with_a_genuine_signature(): void
     {
-        $registration = Registration::create([
-            'reference' => 'REG-TEST0001',
-            'type' => 'visitor',
-            'name' => 'Simran Kaur',
-            'business_category_id' => BusinessCategory::create(['name' => 'Real Estate'])->id,
-            'razorpay_order_id' => 'order_123',
-            'payment_status' => Registration::PAYMENT_CREATED,
-        ]);
+        $category = BusinessCategory::create(['name' => 'Real Estate'])->id;
+        Http::fake(['api.razorpay.com/v1/orders/order_123' => Http::response([
+            'id' => 'order_123',
+            'receipt' => 'REG-TEST0001',
+            'notes' => ['type' => 'visitor', 'name' => 'Simran Kaur', 'business_category_id' => (string) $category,
+                'phone' => '+919876543210', 'email' => 'simran@example.com',
+                'amount' => '1200', 'gst_percent' => '18', 'gst_amount' => '216', 'total_amount' => '1416'],
+        ])]);
 
         $payment = ['razorpay_order_id' => 'order_123', 'razorpay_payment_id' => 'pay_1'];
 
         $this->postJson('/register/paid', $payment + ['razorpay_signature' => 'forged'])->assertStatus(422);
-        $this->assertSame(Registration::PAYMENT_CREATED, $registration->fresh()->payment_status);
+        $this->assertSame(0, Registration::count());
 
         $signature = hash_hmac('sha256', 'order_123|pay_1', 'test_secret');
 
         $this->postJson('/register/paid', $payment + ['razorpay_signature' => $signature])
             ->assertOk()
             ->assertJsonPath('redirect', route('register.confirmed', 'REG-TEST0001'));
-        $this->assertSame(Registration::PAYMENT_PAID, $registration->fresh()->payment_status);
+
+        // A repeat (e.g. the status poll after a dropped response) doesn't write a second row.
+        $this->postJson('/register/paid', $payment + ['razorpay_signature' => $signature])->assertOk();
+
+        $registration = Registration::sole();
+        $this->assertSame(Registration::PAYMENT_PAID, $registration->payment_status);
+        $this->assertSame('pay_1', $registration->razorpay_payment_id);
+        $this->assertSame('1416.00', $registration->total_amount);
+        $this->get(route('register.confirmed', 'REG-TEST0001'))->assertOk()->assertSee('Simran Kaur');
     }
 
     public function test_free_registration_is_confirmed_without_payment(): void
