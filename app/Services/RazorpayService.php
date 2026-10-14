@@ -49,6 +49,12 @@ class RazorpayService
         return hash_equals(hash_hmac('sha256', $orderId.'|'.$paymentId, $this->secret), $signature);
     }
 
+    /** The raw order entity, with the receipt and notes it was opened with. */
+    public function order(string $orderId): array
+    {
+        return $this->api()->get(self::API."/orders/{$orderId}")->throw()->json();
+    }
+
     /** Every payment Razorpay holds against an order, as raw payment entities. */
     public function payments(string $orderId): array
     {

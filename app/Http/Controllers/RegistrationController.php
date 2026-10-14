@@ -35,25 +35,26 @@ class RegistrationController extends Controller
     {
         $data = $this->validated($request);
         $pricing = Registration::pricing($data['type']);
-
-        $registration = Registration::create($data + $pricing + [
-            'reference' => 'REG-'.Str::upper(Str::random(8)),
-            'payment_status' => Registration::PAYMENT_CREATED,
-        ]);
+        $reference = 'REG-'.Str::upper(Str::random(8));
 
         if ($pricing['total_amount'] <= 0) {
-            $registration->update(['payment_status' => Registration::PAYMENT_PAID]);
+            Registration::create($data + $pricing + [
+                'reference' => $reference,
+                'payment_status' => Registration::PAYMENT_PAID,
+            ]);
 
             return response()->json([
                 'message' => 'Registration complete.',
-                'redirect' => route('register.confirmed', $registration->reference),
+                'redirect' => route('register.confirmed', $reference),
             ]);
         }
 
+        // No row until the money lands: the form rides in the order's notes (Razorpay allows
+        // 15 of up to 256 chars; this is 11) and record() writes it once payment is confirmed.
+        $notes = array_map('strval', array_filter($data + $pricing, fn ($value) => $value !== null));
+
         try {
-            $order = $razorpay->createOrder($pricing['total_amount'], $registration->reference, [
-                'registration_id' => (string) $registration->id,
-            ]);
+            $order = $razorpay->createOrder($pricing['total_amount'], $reference, $notes);
         } catch (\Throwable $e) {
             Log::error('Razorpay order could not be opened for a registration.', ['exception' => $e]);
 
@@ -62,8 +63,6 @@ class RegistrationController extends Controller
                     .'Nothing has been charged — please try again in a moment.',
             ], 502);
         }
-
-        $registration->update(['razorpay_order_id' => $order['id']]);
 
         return response()->json([
             'message' => 'Complete payment to finish your registration.',
@@ -79,12 +78,6 @@ class RegistrationController extends Controller
             'razorpay_signature' => ['required', 'string'],
         ]);
 
-        $registration = Registration::where('razorpay_order_id', $data['razorpay_order_id'])->first();
-
-        if (! $registration) {
-            return response()->json(['message' => 'That registration could not be found.'], 404);
-        }
-
         if (! $razorpay->verify($data['razorpay_order_id'], $data['razorpay_payment_id'], $data['razorpay_signature'])) {
             return response()->json([
                 'message' => 'We could not verify that payment. If money was taken, your '
@@ -92,10 +85,8 @@ class RegistrationController extends Controller
             ], 422);
         }
 
-        $registration->update([
-            'payment_status' => Registration::PAYMENT_PAID,
-            'razorpay_payment_id' => $data['razorpay_payment_id'],
-        ]);
+        // If Razorpay can't be reached this throws a 500 and the form falls back to polling status().
+        $registration = $this->record($razorpay, $data['razorpay_order_id'], $data['razorpay_payment_id']);
 
         return response()->json([
             'message' => 'Payment received — your registration is confirmed.',
@@ -106,22 +97,15 @@ class RegistrationController extends Controller
     /** Asks Razorpay directly how an order stands, for when /register/paid didn't get through. */
     public function status(Request $request, RazorpayService $razorpay): JsonResponse
     {
-        $data = $request->validate(['razorpay_order_id' => ['required', 'string']]);
+        $orderId = $data['razorpay_order_id'];
 
-        $registration = Registration::where('razorpay_order_id', $data['razorpay_order_id'])->first();
+        $registration = Registration::firstWhere('razorpay_order_id', $orderId);
 
-        if (! $registration) {
-            return response()->json(['message' => 'That registration could not be found.'], 404);
-        }
-
-        if ($registration->payment_status !== Registration::PAYMENT_PAID) {
+        if ($registration?->payment_status !== Registration::PAYMENT_PAID) {
             try {
-                foreach ($razorpay->payments($registration->razorpay_order_id) as $entity) {
+                foreach ($razorpay->payments($orderId) as $entity) {
                     if (($entity['status'] ?? null) === 'captured') {
-                        $registration->update([
-                            'payment_status' => Registration::PAYMENT_PAID,
-                            'razorpay_payment_id' => $entity['id'] ?? null,
-                        ]);
+                        $registration = $this->record($razorpay, $orderId, $entity['id'] ?? null);
                         break;
                     }
                 }
@@ -130,14 +114,29 @@ class RegistrationController extends Controller
             }
         }
 
-        $status = $registration->fresh()->payment_status;
+        $paid = $registration?->payment_status === Registration::PAYMENT_PAID;
 
         return response()->json([
-            'status' => $status,
-            'redirect' => $status === Registration::PAYMENT_PAID
-                ? route('register.confirmed', $registration->reference)
-                : null,
+            'status' => $paid ? Registration::PAYMENT_PAID : Registration::PAYMENT_CREATED,
+            'redirect' => $paid ? route('register.confirmed', $registration->reference) : null,
         ]);
+    }
+
+    /** Writes the registration for a paid order from the form data store() left in its notes. */
+    private function record(RazorpayService $razorpay, string $orderId, ?string $paymentId): Registration
+    {
+        // An existing row is a retry of the same order, or one opened before rows waited for payment.
+        // ponytail: paid() and status() could race and write it twice; a unique index on razorpay_order_id stops that if it ever happens.
+        $registration = Registration::firstWhere('razorpay_order_id', $orderId);
+
+        if (! $registration) {
+            $order = $razorpay->order($orderId);
+            $registration = new Registration([...$order['notes'], 'reference' => $order['receipt'], 'razorpay_order_id' => $orderId]);
+        }
+
+        $registration->fill(['payment_status' => Registration::PAYMENT_PAID, 'razorpay_payment_id' => $paymentId])->save();
+
+        return $registration;
     }
 
     public function confirmed(string $reference)
