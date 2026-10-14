@@ -1,0 +1,191 @@
+/* Invictus admin — sidebar shell, panels, tables. Same indigo palette as the public form. */
+
+:root{
+  --brand:#3346d3;
+  --brand-hover:#2a3bbd;
+  --brand-soft:#818cf8;
+  --brand-tint:#eef0fd;
+  --ring:0 0 0 3px rgba(51,70,211,.16);
+
+  --ink:#161d33;
+  --ink-2:#434c66;
+  --ink-3:#5b6480;
+  --ink-4:#8790a8;
+
+  --paper:#fff;
+  --ground:#f4f5fa;
+  --edge:#e4e7ef;
+  --edge-strong:#cdd2e0;
+
+  --ok:#166534;
+  --ok-tint:#e7f6ed;
+  --danger:#b42318;
+
+  --radius:14px;
+  --radius-sm:10px;
+  --side:236px;
+
+  --font-heading:'Poppins','Segoe UI',Arial,sans-serif;
+  --font-body:'Inter','Segoe UI',Arial,sans-serif;
+}
+
+*{box-sizing:border-box;}
+body{margin:0;font:14px/1.5 var(--font-body);color:var(--ink);background:var(--ground);-webkit-font-smoothing:antialiased;}
+a{color:var(--brand);}
+:where(a,button,input):focus-visible{outline:2px solid var(--brand);outline-offset:2px;}
+
+/* ---------- Shell ---------- */
+
+.adm-shell{display:grid;grid-template-columns:var(--side) minmax(0, 1fr);min-height:100vh;}
+
+.adm-side{
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px;color:#fff;
+  background:radial-gradient(500px 300px at -20% -10%, rgba(99,102,241,.35), transparent 60%),
+             linear-gradient(170deg, #171d4d 0%, #0a0f2e 100%);
+}
+.adm-brand{display:flex;align-items:center;gap:10px;padding:4px 8px 22px;color:#fff;text-decoration:none;}
+.adm-brand strong{display:block;font:600 15px var(--font-heading);}
+.adm-brand small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.adm-mark{
+  flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  font:700 16px var(--font-heading);color:#fff;background:linear-gradient(135deg, var(--brand), var(--brand-soft));
+}
+
+.adm-nav{display:flex;flex-direction:column;gap:2px;flex:1;}
+.adm-nav a{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+  font-weight:500;color:rgba(255,255,255,.72);text-decoration:none;
+}
+.adm-nav a:hover{color:#fff;background:rgba(255,255,255,.08);}
+.adm-nav a.is-active{color:#fff;font-weight:600;background:rgba(255,255,255,.14);}
+.adm-nav svg{flex:none;width:18px;height:18px;}
+
+.adm-user{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 8px 0;
+  font-size:13px;color:rgba(255,255,255,.8);border-top:1px solid rgba(255,255,255,.12);
+}
+.adm-user form{margin:0;}
+.adm-user .link-btn{color:#c7d0ff;}
+
+.adm-main{min-width:0;max-width:1240px;padding:28px 32px 40px;}
+
+/* ---------- Page ---------- */
+
+.page-head{margin-bottom:20px;}
+.page-head h1{margin:0 0 4px;font:600 22px var(--font-heading);letter-spacing:-.01em;}
+.page-head p{margin:0;color:var(--ink-3);}
+
+.adm-flash{
+  margin-bottom:18px;padding:11px 14px;border-radius:var(--radius-sm);
+  color:var(--ink-2);background:var(--brand-tint);border:1px solid #d7dcfb;
+}
+
+.panel{
+  margin-bottom:18px;padding:20px 22px;background:var(--paper);
+  border:1px solid var(--edge);border-radius:var(--radius);box-shadow:0 1px 2px rgba(22,29,51,.04);
+}
+.panel h2{margin:0 0 6px;font:600 16px var(--font-heading);}
+.sub{margin:0 0 14px;color:var(--ink-3);}
+.empty{
+  padding:22px;text-align:center;color:var(--ink-3);
+  background:var(--ground);border:1px dashed var(--edge-strong);border-radius:var(--radius-sm);
+}
+
+/* ---------- Controls ---------- */
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;
+  font:600 13.5px var(--font-body);color:#fff;background:var(--brand);text-decoration:none;
+  border:1px solid transparent;border-radius:var(--radius-sm);cursor:pointer;
+}
+.btn:hover{background:var(--brand-hover);}
+.btn-quiet{color:var(--brand);background:var(--paper);border-color:#d7dcfb;}
+.btn-quiet:hover{background:var(--brand-tint);}
+.btn-block{width:100%;}
+
+.link-btn{padding:0;border:none;background:none;font:inherit;font-weight:600;color:var(--brand);cursor:pointer;text-decoration:none;}
+.link-btn:hover{text-decoration:underline;}
+.link-btn.is-danger{color:var(--danger);}
+
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:12.5px;font-weight:600;color:var(--ink-2);}
+input[type=text],input[type=email],input[type=password],input[type=number]{
+  width:100%;padding:10px 12px;font:inherit;color:var(--ink);background:#fff;
+  border:1px solid var(--edge-strong);border-radius:var(--radius-sm);
+}
+input:focus{outline:none;border-color:var(--brand);box-shadow:var(--ring);}
+.err{font-size:12.5px;color:var(--danger);}
+
+.inline-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px;}
+.inline-form input{flex:1 1 220px;width:auto;}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:0 16px;max-width:620px;}
+
+/* ---------- Tables ---------- */
+
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--edge);}
+th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);background:var(--ground);}
+tbody tr:hover{background:#fafbff;}
+tbody tr:last-child td{border-bottom:none;}
+td.col-actions{width:1%;white-space:nowrap;text-align:right;}
+td.col-actions form{margin:0;}
+.cell-note{display:block;font-size:12px;color:var(--ink-4);}
+
+.ref-code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-weight:600;letter-spacing:.02em;white-space:nowrap;}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+.tag.paid{color:var(--ok);background:var(--ok-tint);}
+.tag.created{color:var(--ink-2);background:#eceef4;}
+
+/* ---------- Registration QR ---------- */
+
+.qr-panel{display:flex;flex-wrap:wrap;align-items:center;gap:24px;}
+.qr-code{
+  flex:none;display:block;width:168px;height:168px;padding:6px;background:#fff;
+  border:1px solid var(--edge);border-radius:var(--radius-sm);
+}
+.qr-body{flex:1 1 300px;min-width:0;}
+.qr-body .sub{margin-bottom:8px;}
+.qr-link{font-weight:600;overflow-wrap:anywhere;}
+.qr-invite,.qr-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px;}
+.qr-invite input{flex:1 1 240px;width:auto;max-width:340px;}
+
+/* ---------- Sign in ---------- */
+
+.adm-login{
+  min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(700px 420px at 10% 0%, rgba(99,102,241,.35), transparent 60%),
+             linear-gradient(160deg, #171d4d 0%, #090d26 100%);
+}
+.adm-login-card{width:100%;max-width:380px;padding:32px;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.25);}
+.adm-login-card .adm-mark{margin-bottom:16px;}
+.adm-login-card h1{margin:0;font:600 20px var(--font-heading);}
+.check{display:flex;align-items:center;gap:8px;margin:2px 0 16px;font-size:13px;color:var(--ink-2);}
+
+/* ---------- Narrow screens: the sidebar becomes a top bar, tables become cards ---------- */
+
+@media (max-width:860px){
+  /* minmax(0, …) so the scrolling menu can't stretch the page wider than the phone. */
+  .adm-shell{grid-template-columns:minmax(0, 1fr);}
+  .adm-side{z-index:10;min-width:0;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;}
+  .adm-brand{padding:0;}
+  .adm-brand small{display:none;}
+  .adm-nav{order:3;flex:1 0 100%;min-width:0;flex-direction:row;gap:4px;overflow-x:auto;}
+  .adm-nav a{flex:none;padding:8px 10px;}
+  .adm-user{margin-left:auto;padding:0;border:none;}
+  .adm-user span{display:none;}
+  .adm-main{padding:20px 14px 32px;}
+}
+
+@media (max-width:640px){
+  table thead{display:none;}
+  table tr{display:block;padding:10px 12px;border-bottom:1px solid var(--edge);}
+  table td{display:flex;justify-content:space-between;gap:12px;padding:5px 0;text-align:right;border:none;}
+  table td::before{
+    content:attr(data-label);flex:none;text-align:left;
+    font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);
+  }
+  td.col-actions{width:auto;justify-content:flex-end;}
+  td.col-actions::before{content:none;}
+}

@@ -1,0 +1,406 @@
+/* Public registration (Invictus Launch) — its own page, sharing nothing with the admin or exhibitor screens. */
+
+:root{
+  --brand:#3346d3;
+  --brand-hover:#2a3bbd;
+  --brand-soft:#818cf8;
+  --brand-tint:#eef0fd;
+  --brand-ring:0 0 0 4px rgba(51,70,211,.14);
+
+  --ink:#161d33;
+  --ink-2:#434c66;
+  --ink-3:#5b6480;
+  --ink-4:#8790a8;
+  --ink-5:#a8afc2;
+
+  --paper:#fff;
+  --ground:#f4f5fa;
+  --edge:#e4e7ef;
+  --edge-strong:#cdd2e0;
+  --edge-hover:#b3b9cc;
+
+  --danger:#b42318;
+  --danger-edge:#d64545;
+  --ok:#16a34a;
+
+  --font-heading:'Poppins','Segoe UI',Arial,sans-serif;
+  --font-body:'Inter','Segoe UI',Arial,sans-serif;
+}
+
+*{box-sizing:border-box;}
+[hidden]{display:none !important;}
+
+body{
+  margin:0;font:15px/1.5 var(--font-body);color:var(--ink);background:var(--ground);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+fieldset{border:0;margin:0;padding:0;min-width:0;}
+legend{padding:0;}
+
+/* ---------- Shell: the event panel on the left, the form on the right ---------- */
+
+.reg-shell{
+  display:grid;grid-template-columns:minmax(360px, 40%) 1fr;
+  min-height:100vh;min-height:100dvh;
+}
+
+.reg-hero{
+  position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;
+  display:flex;align-items:center;padding:56px 52px;color:#fff;
+  background:
+    radial-gradient(900px 520px at -15% -10%, rgba(99,102,241,.40), transparent 60%),
+    radial-gradient(800px 480px at 115% 110%, rgba(56,189,248,.18), transparent 60%),
+    linear-gradient(160deg, #171d4d 0%, #090d26 100%);
+}
+.reg-hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.3px);
+  background-size:22px 22px;
+  -webkit-mask-image:linear-gradient(180deg, #000 0%, transparent 80%);
+  mask-image:linear-gradient(180deg, #000 0%, transparent 80%);
+}
+.reg-hero-inner{position:relative;width:100%;max-width:400px;margin:0 auto;}
+
+.reg-kicker{
+  display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:6px 13px;
+  border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.88);
+}
+.reg-kicker::before{
+  content:'';width:7px;height:7px;border-radius:50%;background:#a5b4fc;
+  box-shadow:0 0 0 4px rgba(165,180,252,.22);
+}
+.reg-title{margin:0 0 12px;font:600 40px/1.12 var(--font-heading);letter-spacing:-.025em;}
+.reg-tagline{margin:0;font-size:15px;line-height:1.6;color:rgba(255,255,255,.68);}
+
+/* Vertical stepper */
+.reg-steps{list-style:none;margin:44px 0 0;padding:0;}
+.reg-steps li{position:relative;display:flex;gap:14px;padding-bottom:24px;}
+.reg-steps li:last-child{padding-bottom:0;}
+.reg-steps li:not(:last-child)::before{
+  content:'';position:absolute;left:15px;top:36px;bottom:4px;width:2px;border-radius:2px;
+  background:rgba(255,255,255,.14);transition:background-color .3s ease;
+}
+.reg-steps li.is-done:not(:last-child)::before{background:var(--brand-soft);}
+
+.reg-dot{
+  position:relative;flex:none;width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;
+  font:600 13px var(--font-heading);color:rgba(255,255,255,.6);
+  border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.04);
+  transition:background-color .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease;
+}
+.is-on .reg-dot{
+  background:#fff;border-color:#fff;color:var(--brand);
+  box-shadow:0 0 0 5px rgba(255,255,255,.12);
+}
+.is-done .reg-dot{background:var(--brand-soft);border-color:var(--brand-soft);color:transparent;}
+.is-done .reg-dot::after{
+  content:'';position:absolute;left:50%;top:50%;width:11px;height:6px;
+  border-left:2.2px solid #fff;border-bottom:2.2px solid #fff;
+  transform:translate(-50%, -65%) rotate(-45deg);
+}
+
+.reg-step-text{display:flex;flex-direction:column;padding-top:5px;}
+.reg-step-text b{font-size:14.5px;font-weight:600;color:rgba(255,255,255,.62);transition:color .25s ease;}
+.reg-step-text small{margin-top:2px;font-size:12.5px;color:rgba(255,255,255,.42);}
+.is-on .reg-step-text b{color:#fff;}
+.is-done .reg-step-text b{color:rgba(255,255,255,.86);}
+
+/* ---------- Main column ---------- */
+
+.reg-main{display:flex;flex-direction:column;min-width:0;}
+
+/* Top-aligned rather than centred, so the card doesn't jump as steps change height. */
+.reg-main-inner{
+  flex:1;display:flex;justify-content:center;align-items:flex-start;
+  padding:clamp(40px, 11vh, 110px) 32px 40px;
+}
+
+/* clip (not hidden) rounds off the progress bar without trapping the sticky phone action bar. */
+.reg-card{
+  position:relative;width:100%;max-width:560px;overflow:hidden;overflow:clip;
+  padding:40px 44px 36px;background:var(--paper);
+  border:1px solid var(--edge);border-radius:20px;
+  box-shadow:0 1px 2px rgba(22,29,51,.04), 0 18px 50px rgba(22,29,51,.08);
+}
+
+.reg-progress{position:absolute;top:0;left:0;right:0;height:4px;background:var(--edge);}
+.reg-progress span{
+  display:block;height:100%;width:20%;border-radius:0 4px 4px 0;
+  background:linear-gradient(90deg, var(--brand), var(--brand-soft));
+  transition:width .35s ease;
+}
+
+.reg-eyebrow{
+  margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--brand);
+}
+
+.reg-q{
+  display:block;margin:0 0 6px;
+  font:600 25px/1.25 var(--font-heading);letter-spacing:-.015em;color:var(--ink);
+}
+.reg-hint{margin:0 0 24px;font-size:14.5px;line-height:1.55;color:var(--ink-3);}
+
+.wizard-step{animation:reg-in .28s ease both;}
+@keyframes reg-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+.reg-alert{
+  margin:0 0 20px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.5;
+  color:var(--danger);background:#fdecec;border:1px solid #f3c9c9;
+}
+.reg-note{
+  margin:0;padding:12px 14px;border-radius:12px;font-size:13.5px;
+  color:var(--ink-2);background:var(--brand-tint);border:1px solid #d7dcfb;
+}
+
+/* ---------- Fields ---------- */
+
+.reg-field{margin-bottom:18px;}
+.reg-field > label{display:block;margin-bottom:7px;font-size:13px;font-weight:600;color:var(--ink-2);}
+.reg-optional{margin-left:6px;font-size:12px;font-weight:500;color:var(--ink-4);}
+
+/* 16px text: anything smaller and iPhone Safari zooms the page in on focus. */
+.reg-field input:not([type=radio]){
+  width:100%;height:52px;padding:0 16px;
+  font:500 16px var(--font-body);color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--edge-strong);border-radius:12px;
+  transition:border-color .15s ease, box-shadow .15s ease;
+  -webkit-appearance:none;appearance:none;
+}
+.reg-field input::placeholder{color:var(--ink-5);font-weight:400;}
+.reg-field input:hover{border-color:var(--edge-hover);}
+.reg-field input:focus{outline:none;border-color:var(--brand);box-shadow:var(--brand-ring);}
+.reg-field input.is-invalid{border-color:var(--danger-edge);}
+.reg-field input.is-invalid:focus{box-shadow:0 0 0 4px rgba(214,69,69,.14);}
+
+.reg-err{display:block;margin-top:6px;font-size:12.5px;color:var(--danger);}
+
+/* Radio inputs stay in the DOM — focusable, validatable — but the card is what you see. */
+.reg-choice input,
+.reg-tile input,
+.reg-option input{position:absolute;top:50%;left:14px;width:1px;height:1px;margin:0;opacity:0;}
+
+/* Member / visitor cards */
+.reg-choices{display:grid;gap:12px;}
+.reg-choice{
+  position:relative;display:flex;align-items:center;gap:16px;padding:18px;
+  border:1.5px solid var(--edge-strong);border-radius:14px;background:var(--paper);cursor:pointer;
+  transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.reg-choice:hover{border-color:var(--edge-hover);box-shadow:0 4px 14px rgba(22,29,51,.06);}
+.reg-choice:has(:checked){border-color:var(--brand);background:var(--brand-tint);box-shadow:var(--brand-ring);}
+
+.reg-choice-icon{
+  flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+  background:var(--brand-tint);color:var(--brand);transition:background-color .15s ease, color .15s ease;
+}
+.reg-choice-icon svg{width:22px;height:22px;}
+.reg-choice:has(:checked) .reg-choice-icon{background:var(--brand);color:#fff;}
+
+.reg-choice-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.reg-choice-title{font:600 16px var(--font-heading);color:var(--ink);}
+.reg-choice-sub{font-size:13px;color:var(--ink-3);}
+.reg-choice-price{
+  flex:none;display:flex;flex-direction:column;align-items:flex-end;
+  font-size:15px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+.reg-choice-price small{font-size:11px;font-weight:500;color:var(--ink-4);}
+
+/* Chapter tiles */
+.reg-tiles{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px;}
+.reg-tile{
+  position:relative;display:flex;align-items:center;gap:11px;padding:14px 16px;
+  border:1.5px solid var(--edge-strong);border-radius:12px;background:var(--paper);cursor:pointer;
+  font-size:15px;font-weight:600;color:var(--ink);
+  transition:border-color .15s ease, background-color .15s ease;
+}
+.reg-tile:hover{border-color:var(--edge-hover);}
+.reg-tile:has(:checked){border-color:var(--brand);background:var(--brand-tint);}
+
+/* Searchable category list */
+.reg-search{position:relative;margin-bottom:10px;}
+.reg-search svg{
+  position:absolute;left:16px;top:50%;width:18px;height:18px;margin-top:-9px;
+  color:var(--ink-4);pointer-events:none;
+}
+.reg-field .reg-search input{padding-left:46px;}
+
+.reg-list{
+  max-height:min(320px, 46vh);overflow-y:auto;overscroll-behavior:contain;
+  padding:6px;border:1.5px solid var(--edge-strong);border-radius:12px;background:var(--paper);
+}
+.reg-option{
+  position:relative;display:flex;align-items:center;gap:12px;padding:12px;border-radius:9px;
+  font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;
+  transition:background-color .12s ease;
+}
+.reg-option:hover{background:var(--ground);}
+.reg-option:has(:checked){background:var(--brand-tint);color:var(--brand);font-weight:600;}
+.reg-list-empty{margin:0;padding:22px 12px;text-align:center;font-size:14px;color:var(--ink-4);}
+
+/* The radio ring shared by tiles and list options */
+.reg-tile::before,
+.reg-option::before{
+  content:'';flex:none;width:18px;height:18px;border-radius:50%;
+  border:1.5px solid var(--edge-strong);background:var(--paper);
+  transition:border .15s ease;
+}
+.reg-tile:has(:checked)::before,
+.reg-option:has(:checked)::before{border:5.5px solid var(--brand);}
+
+.reg-choice:has(:focus-visible),
+.reg-tile:has(:focus-visible){outline:2px solid var(--brand);outline-offset:2px;}
+.reg-option:has(:focus-visible){outline:2px solid var(--brand);outline-offset:-2px;}
+
+/* ---------- Review ---------- */
+
+.reg-summary{margin:0;border:1px solid var(--edge);border-radius:14px;overflow:hidden;}
+.reg-summary > div{
+  display:grid;grid-template-columns:120px minmax(0, 1fr) auto;gap:12px;align-items:center;
+  padding:13px 16px;border-top:1px solid var(--edge);
+}
+.reg-summary > div:first-child{border-top:none;}
+.reg-summary dt{font-size:12.5px;font-weight:500;color:var(--ink-4);}
+.reg-summary dd{margin:0;font-size:14px;font-weight:600;color:var(--ink);overflow-wrap:anywhere;}
+
+.reg-edit{
+  padding:6px 10px;border:none;border-radius:8px;background:none;cursor:pointer;
+  font:600 13px var(--font-body);color:var(--brand);
+}
+.reg-edit:hover{background:var(--brand-tint);}
+
+.reg-bill{margin-top:16px;padding:12px 18px;background:var(--ground);border-radius:14px;}
+.reg-bill > div{
+  display:flex;justify-content:space-between;gap:12px;padding:5px 0;
+  font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums;
+}
+.reg-bill .is-total{
+  margin-top:6px;padding-top:12px;border-top:1px dashed var(--edge-strong);
+  font-size:16px;font-weight:700;color:var(--ink);
+}
+
+.reg-secure{display:flex;align-items:center;gap:8px;margin:16px 0 0;font-size:12.5px;color:var(--ink-3);}
+.reg-secure svg{flex:none;width:16px;height:16px;color:var(--ok);}
+
+/* ---------- Buttons ---------- */
+
+.reg-nav{display:flex;align-items:center;gap:12px;margin-top:28px;}
+
+.reg-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:52px;padding:0 24px;border:1.5px solid transparent;border-radius:12px;
+  font:600 15.5px var(--font-body);cursor:pointer;
+  transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .07s ease;
+}
+.reg-btn svg{flex:none;width:18px;height:18px;}
+.reg-btn:focus-visible{outline:2px solid var(--brand);outline-offset:3px;}
+.reg-btn:active{transform:translateY(1px);}
+
+.reg-btn-primary{
+  margin-left:auto;min-width:160px;color:#fff;background:var(--brand);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 6px 18px rgba(51,70,211,.28);
+}
+.reg-btn-primary:hover{background:var(--brand-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 8px 22px rgba(51,70,211,.34);}
+.reg-btn-primary:disabled{opacity:.72;cursor:progress;transform:none;}
+
+.reg-btn-ghost{padding:0 18px;color:var(--ink-2);background:var(--paper);border-color:var(--edge-strong);}
+.reg-btn-ghost:hover{color:var(--ink);background:var(--ground);border-color:var(--edge-hover);}
+
+/* ---------- Confirmation ---------- */
+
+.reg-done{text-align:center;}
+.reg-done-mark{
+  width:72px;height:72px;margin:4px auto 20px;border-radius:50%;
+  display:grid;place-items:center;color:var(--ok);background:#e7f6ed;
+  box-shadow:0 0 0 10px rgba(22,163,74,.07);
+}
+.reg-done-mark svg{width:34px;height:34px;}
+.reg-done-title{margin:0 0 6px;font:600 25px/1.25 var(--font-heading);letter-spacing:-.015em;}
+.reg-done .reg-hint{margin-bottom:0;}
+
+.reg-ref{
+  display:inline-flex;flex-direction:column;gap:2px;margin:24px 0 26px;padding:12px 28px;
+  background:var(--ground);border:1.5px dashed var(--edge-strong);border-radius:12px;
+}
+.reg-ref span{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);}
+.reg-ref strong{font:600 20px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;letter-spacing:.06em;color:var(--brand);}
+
+.reg-done .reg-summary,
+.reg-done .reg-bill{text-align:left;}
+.reg-done .reg-nav{justify-content:center;}
+
+/* ---------- Footer ---------- */
+
+.reg-foot{
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:20px 16px 28px;
+  font-size:13px;font-weight:600;color:var(--ink-3);
+}
+.reg-foot img{display:block;height:30px;}
+.reg-foot .heart{color:#e11d48;}
+
+/* ---------- Phones and tablets: the panel becomes a slim banner the card overlaps ---------- */
+
+@media (max-width:900px){
+  /* Keeps a focused field clear of the sticky action bar. */
+  html{scroll-padding-bottom:110px;}
+
+  .reg-shell{grid-template-columns:1fr;}
+  .reg-hero{position:static;height:auto;padding:28px 22px 58px;}
+  .reg-hero-inner{max-width:560px;}
+  .reg-kicker{margin-bottom:12px;padding:5px 11px;font-size:10.5px;}
+  .reg-title{margin-bottom:6px;font-size:28px;}
+  .reg-tagline{font-size:14px;}
+  .reg-steps{display:none;}
+
+  .reg-main-inner{margin-top:-30px;padding:0 12px 16px;}
+  .reg-card{padding:28px 20px 24px;border-radius:20px;}
+
+  /* Thumb-reach actions: the buttons ride the bottom of the screen until the card ends. */
+  .reg-nav.is-sticky{
+    position:sticky;bottom:0;z-index:5;
+    margin:24px -20px -24px;
+    padding:12px 20px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border-top:1px solid var(--edge);
+  }
+}
+
+@media (max-width:480px){
+  .reg-q,.reg-done-title{font-size:21px;}
+  .reg-hint{margin-bottom:20px;font-size:14px;}
+  .reg-tiles{grid-template-columns:1fr;}
+  .reg-choice{gap:13px;padding:15px;}
+  .reg-choice-icon{width:42px;height:42px;}
+  /* Label above value, so an email address gets the whole width instead of wrapping mid-word. */
+  .reg-summary > div{
+    grid-template-columns:minmax(0, 1fr) auto;grid-template-areas:"label edit" "value edit";
+    row-gap:2px;padding:11px 14px;
+  }
+  .reg-summary dt{grid-area:label;}
+  .reg-summary dd{grid-area:value;}
+  .reg-edit{grid-area:edit;}
+
+  /* Back shrinks to an arrow so Continue gets the width. */
+  .reg-nav.is-sticky .reg-btn-ghost{width:52px;padding:0;}
+  .reg-nav.is-sticky .reg-btn-label{
+    position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+  }
+  .reg-btn-primary{flex:1;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;}
+}
+
+@media print{
+  .reg-hero,.reg-foot,.reg-nav{display:none !important;}
+  .reg-shell{display:block;}
+  body{background:#fff;}
+  .reg-main-inner{padding:0;}
+  .reg-card{box-shadow:none;border:none;}
+}
