@@ -7,7 +7,8 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/register');
+// Named-route redirects keep the app's base path (e.g. /invictus) when it runs in a subfolder.
+Route::get('/', fn () => redirect()->route('register'));
 
 // Public — members and visitors register themselves, no sign-in.
 Route::get('register', [RegistrationController::class, 'create'])->name('register');
@@ -28,7 +29,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-        Route::redirect('/', '/admin/registrations');
+        Route::get('/', fn () => redirect()->route('admin.registrations'));
 
         Route::get('registrations', [RegistrationsController::class, 'index'])->name('registrations');
 

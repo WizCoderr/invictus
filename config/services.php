@@ -35,11 +35,4 @@ return [
         ],
     ],
 
-    // Test keys locally, live keys in production — the code is the same either way.
-    'razorpay' => [
-        'key' => env('RAZORPAY_KEY'),
-        'secret' => env('RAZORPAY_SECRET'),
-        'currency' => env('RAZORPAY_CURRENCY', 'INR'),
-    ],
-
 ];

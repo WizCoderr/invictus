@@ -19,7 +19,28 @@ class RegistrationTest extends TestCase
     {
         parent::setUp();
 
-        config(['services.razorpay.key' => 'rzp_test_key', 'services.razorpay.secret' => 'test_secret']);
+        config([
+            'payment-gateway.default' => 'razorpay',
+            'payment-gateway.test_mode' => true,
+            'payment-gateway.drivers.razorpay.test' => ['key' => 'rzp_test_key', 'secret' => 'test_secret'],
+            'payment-gateway.drivers.razorpay.live' => ['key' => 'rzp_live_key', 'secret' => 'live_secret'],
+        ]);
+    }
+
+    public function test_test_mode_switch_picks_the_matching_razorpay_keys(): void
+    {
+        Http::fake(['api.razorpay.com/v1/orders' => Http::response(['id' => 'order_1', 'amount' => 141600, 'currency' => 'INR'])]);
+        $category = BusinessCategory::create(['name' => 'Real Estate'])->id;
+        $visitor = ['type' => 'visitor', 'name' => 'Simran Kaur', 'business_category_id' => $category,
+            'phone' => '9876543210', 'email' => 'simran@example.com'];
+
+        $this->postJson('/register', $visitor)->assertJsonPath('order.key', 'rzp_test_key');
+
+        config(['payment-gateway.test_mode' => false]);
+        $this->postJson('/register', $visitor)->assertJsonPath('order.key', 'rzp_live_key');
+
+        // The live order was opened with the live credentials, not the test ones.
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Basic '.base64_encode('rzp_live_key:live_secret')));
     }
 
     public function test_visitor_registration_opens_a_razorpay_order_for_fee_plus_gst(): void
