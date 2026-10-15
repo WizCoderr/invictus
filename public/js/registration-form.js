@@ -207,8 +207,11 @@
     bill.hidden = !paid;
     document.getElementById('wizard-secure-note').hidden = !paid;
 
-    bill.innerHTML = !paid ? '' : line('Registration fee', S.inr(f.amount))
-      + line('GST @ ' + f.gst_percent + '%', S.inr(f.gst_amount))
+    // With no GST on top, the fee is the whole price — so no GST line, and the label says so.
+    var gst = f.gst_amount > 0;
+
+    bill.innerHTML = !paid ? '' : line(gst ? 'Registration fee' : 'Registration fee (Incl. GST)', S.inr(f.amount))
+      + (gst ? line('GST @ ' + f.gst_percent + '%', S.inr(f.gst_amount)) : '')
       + line('Total', S.inr(f.total_amount), 'is-total');
   }
 

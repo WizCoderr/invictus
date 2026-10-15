@@ -63,7 +63,7 @@
                 </span>
                 <span class="reg-choice-price">
                   @if ($fees[$value]['total_amount'] > 0)
-                    {{ \App\Support\Money::inr($fees[$value]['amount']) }}<small>+ GST</small>
+                    {{ \App\Support\Money::inr($fees[$value]['amount']) }}<small>{{ $fees[$value]['gst_amount'] > 0 ? '+ GST' : 'Incl. GST' }}</small>
                   @else
                     Free
                   @endif

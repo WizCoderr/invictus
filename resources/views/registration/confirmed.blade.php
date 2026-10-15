@@ -42,8 +42,12 @@
 
     @if ($registration->total_amount > 0)
       <div class="reg-bill">
-        <div><span>Registration fee</span><span>{{ \App\Support\Money::inr((float) $registration->amount) }}</span></div>
-        <div><span>GST</span><span>{{ \App\Support\Money::inr((float) $registration->gst_amount) }}</span></div>
+        @if ((float) $registration->gst_amount > 0)
+          <div><span>Registration fee</span><span>{{ \App\Support\Money::inr((float) $registration->amount) }}</span></div>
+          <div><span>GST</span><span>{{ \App\Support\Money::inr((float) $registration->gst_amount) }}</span></div>
+        @else
+          <div><span>Registration fee (Incl. GST)</span><span>{{ \App\Support\Money::inr((float) $registration->amount) }}</span></div>
+        @endif
         <div class="is-total"><span>Paid</span><span>{{ \App\Support\Money::inr((float) $registration->total_amount) }}</span></div>
       </div>
     @endif
