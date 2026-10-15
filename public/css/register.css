@@ -1,23 +1,23 @@
-/* Public registration (Invictus Launch) — its own page, sharing nothing with the admin or exhibitor screens. */
+/* Public registration (Chapter Launch) — its own page, sharing nothing with the admin or exhibitor screens. */
 
 :root{
-  --brand:#3346d3;
-  --brand-hover:#2a3bbd;
-  --brand-soft:#818cf8;
-  --brand-tint:#eef0fd;
-  --brand-ring:0 0 0 4px rgba(51,70,211,.14);
+  --brand:#cf2030;
+  --brand-hover:#a81a27;
+  --brand-soft:#e4525f;
+  --brand-tint:#fdf0f1;
+  --brand-ring:0 0 0 4px rgba(207,32,48,.14);
 
-  --ink:#161d33;
-  --ink-2:#434c66;
-  --ink-3:#5b6480;
-  --ink-4:#8790a8;
-  --ink-5:#a8afc2;
+  --ink:#292727;
+  --ink-2:#45474a;
+  --ink-3:#63666a;
+  --ink-4:#8d8f92;
+  --ink-5:#b0b2b4;
 
   --paper:#fff;
-  --ground:#f4f5fa;
-  --edge:#e4e7ef;
-  --edge-strong:#cdd2e0;
-  --edge-hover:#b3b9cc;
+  --ground:#f5f7f7;
+  --edge:#e4e4e4;
+  --edge-strong:#c8c9c7;
+  --edge-hover:#a9aaa8;
 
   --danger:#b42318;
   --danger-edge:#d64545;
@@ -49,9 +49,9 @@ legend{padding:0;}
   position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden;
   display:flex;align-items:center;padding:56px 52px;color:#fff;
   background:
-    radial-gradient(900px 520px at -15% -10%, rgba(99,102,241,.40), transparent 60%),
-    radial-gradient(800px 480px at 115% 110%, rgba(56,189,248,.18), transparent 60%),
-    linear-gradient(160deg, #171d4d 0%, #090d26 100%);
+    radial-gradient(900px 520px at -15% -10%, rgba(255,255,255,.14), transparent 60%),
+    radial-gradient(800px 480px at 115% 110%, rgba(120,8,20,.35), transparent 60%),
+    linear-gradient(160deg, #d8233a 0%, #b5182a 100%);
 }
 .reg-hero::before{
   content:'';position:absolute;inset:0;pointer-events:none;
@@ -62,18 +62,26 @@ legend{padding:0;}
 }
 .reg-hero-inner{position:relative;width:100%;max-width:400px;margin:0 auto;}
 
+/* The logos have a white ground and charcoal type, so each sits on its own white plate over the red panel. */
+.reg-logos{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin:0 0 36px;}
+.reg-logo{
+  display:block;padding:18px 22px;background:#fff;border-radius:12px;
+  box-shadow:0 10px 30px rgba(80,0,10,.25);
+}
+.reg-logo img{display:block;width:220px;height:auto;}
+
 .reg-kicker{
   display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:6px 13px;
-  border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
   font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.88);
+  color:#fff;
 }
 .reg-kicker::before{
-  content:'';width:7px;height:7px;border-radius:50%;background:#a5b4fc;
-  box-shadow:0 0 0 4px rgba(165,180,252,.22);
+  content:'';width:7px;height:7px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.25);
 }
 .reg-title{margin:0 0 12px;font:600 40px/1.12 var(--font-heading);letter-spacing:-.025em;}
-.reg-tagline{margin:0;font-size:15px;line-height:1.6;color:rgba(255,255,255,.68);}
+.reg-tagline{margin:0;font-size:15px;line-height:1.6;color:rgba(255,255,255,.88);}
 
 /* Vertical stepper */
 .reg-steps{list-style:none;margin:44px 0 0;padding:0;}
@@ -81,22 +89,22 @@ legend{padding:0;}
 .reg-steps li:last-child{padding-bottom:0;}
 .reg-steps li:not(:last-child)::before{
   content:'';position:absolute;left:15px;top:36px;bottom:4px;width:2px;border-radius:2px;
-  background:rgba(255,255,255,.14);transition:background-color .3s ease;
+  background:rgba(255,255,255,.3);transition:background-color .3s ease;
 }
-.reg-steps li.is-done:not(:last-child)::before{background:var(--brand-soft);}
+.reg-steps li.is-done:not(:last-child)::before{background:#fff;}
 
 .reg-dot{
   position:relative;flex:none;width:32px;height:32px;border-radius:50%;
   display:grid;place-items:center;
-  font:600 13px var(--font-heading);color:rgba(255,255,255,.6);
-  border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.04);
+  font:600 13px var(--font-heading);color:rgba(255,255,255,.85);
+  border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.08);
   transition:background-color .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease;
 }
 .is-on .reg-dot{
   background:#fff;border-color:#fff;color:var(--brand);
-  box-shadow:0 0 0 5px rgba(255,255,255,.12);
+  box-shadow:0 0 0 5px rgba(255,255,255,.22);
 }
-.is-done .reg-dot{background:var(--brand-soft);border-color:var(--brand-soft);color:transparent;}
+.is-done .reg-dot{background:rgba(255,255,255,.22);border-color:#fff;color:transparent;}
 .is-done .reg-dot::after{
   content:'';position:absolute;left:50%;top:50%;width:11px;height:6px;
   border-left:2.2px solid #fff;border-bottom:2.2px solid #fff;
@@ -104,19 +112,19 @@ legend{padding:0;}
 }
 
 .reg-step-text{display:flex;flex-direction:column;padding-top:5px;}
-.reg-step-text b{font-size:14.5px;font-weight:600;color:rgba(255,255,255,.62);transition:color .25s ease;}
-.reg-step-text small{margin-top:2px;font-size:12.5px;color:rgba(255,255,255,.42);}
+.reg-step-text b{font-size:14.5px;font-weight:600;color:rgba(255,255,255,.8);transition:color .25s ease;}
+.reg-step-text small{margin-top:2px;font-size:12.5px;color:rgba(255,255,255,.72);}
 .is-on .reg-step-text b{color:#fff;}
-.is-done .reg-step-text b{color:rgba(255,255,255,.86);}
+.is-done .reg-step-text b{color:rgba(255,255,255,.92);}
 
 /* ---------- Main column ---------- */
 
 .reg-main{display:flex;flex-direction:column;min-width:0;}
 
-/* Top-aligned rather than centred, so the card doesn't jump as steps change height. */
+/* Centred in the space beside the panel; the footer stays pinned below. */
 .reg-main-inner{
-  flex:1;display:flex;justify-content:center;align-items:flex-start;
-  padding:clamp(40px, 11vh, 110px) 32px 40px;
+  flex:1;display:flex;justify-content:center;align-items:center;
+  padding:40px 32px;
 }
 
 /* clip (not hidden) rounds off the progress bar without trapping the sticky phone action bar. */
@@ -124,14 +132,15 @@ legend{padding:0;}
   position:relative;width:100%;max-width:560px;overflow:hidden;overflow:clip;
   padding:40px 44px 36px;background:var(--paper);
   border:1px solid var(--edge);border-radius:20px;
-  box-shadow:0 1px 2px rgba(22,29,51,.04), 0 18px 50px rgba(22,29,51,.08);
+  box-shadow:0 1px 2px rgba(41,39,39,.04), 0 18px 50px rgba(41,39,39,.08);
 }
 
-.reg-progress{position:absolute;top:0;left:0;right:0;height:4px;background:var(--edge);}
+.reg-progress{position:absolute;top:0;left:0;right:0;height:3px;background:var(--brand-tint);}
 .reg-progress span{
-  display:block;height:100%;width:20%;border-radius:0 4px 4px 0;
+  display:block;height:100%;width:20%;border-radius:0 3px 3px 0;
   background:linear-gradient(90deg, var(--brand), var(--brand-soft));
-  transition:width .35s ease;
+  box-shadow:0 0 8px rgba(207,32,48,.45);
+  transition:width .45s cubic-bezier(.22,.61,.36,1);
 }
 
 .reg-eyebrow{
@@ -145,8 +154,20 @@ legend{padding:0;}
 }
 .reg-hint{margin:0 0 24px;font-size:14.5px;line-height:1.55;color:var(--ink-3);}
 
-.wizard-step{animation:reg-in .28s ease both;}
-@keyframes reg-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+/* Steps slide in from the side you're heading towards: right going forward, left going back. */
+.wizard-step{animation:reg-in-next .32s cubic-bezier(.22,.61,.36,1) both;}
+.is-back .wizard-step{animation-name:reg-in-back;}
+@keyframes reg-in-next{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:none;}}
+@keyframes reg-in-back{from{opacity:0;transform:translateX(-24px);}to{opacity:1;transform:none;}}
+
+/* A nudge when Continue is pressed with something missing. */
+.is-shaking{animation:reg-shake .4s cubic-bezier(.36,.07,.19,.97) both;}
+@keyframes reg-shake{
+  10%,90%{transform:translateX(-1px);}
+  20%,80%{transform:translateX(3px);}
+  30%,50%,70%{transform:translateX(-5px);}
+  40%,60%{transform:translateX(5px);}
+}
 
 .reg-alert{
   margin:0 0 20px;padding:12px 14px;border-radius:12px;font-size:13.5px;line-height:1.5;
@@ -154,7 +175,7 @@ legend{padding:0;}
 }
 .reg-note{
   margin:0;padding:12px 14px;border-radius:12px;font-size:13.5px;
-  color:var(--ink-2);background:var(--brand-tint);border:1px solid #d7dcfb;
+  color:var(--ink-2);background:var(--brand-tint);border:1px solid #f5c6cb;
 }
 
 /* ---------- Fields ---------- */
@@ -173,11 +194,31 @@ legend{padding:0;}
 }
 .reg-field input::placeholder{color:var(--ink-5);font-weight:400;}
 .reg-field input:hover{border-color:var(--edge-hover);}
-.reg-field input:focus{outline:none;border-color:var(--brand);box-shadow:var(--brand-ring);}
-.reg-field input.is-invalid{border-color:var(--danger-edge);}
+.reg-field input:focus{outline:none;border-color:var(--brand);box-shadow:var(--brand-ring), 0 6px 16px rgba(207,32,48,.10);}
+.reg-field input.is-invalid{border-color:var(--danger-edge);background:#fffafa;}
 .reg-field input.is-invalid:focus{box-shadow:0 0 0 4px rgba(214,69,69,.14);}
 
-.reg-err{display:block;margin-top:6px;font-size:12.5px;color:var(--danger);}
+/* Leading icon inside the box; it takes the brand colour while the box has focus. */
+.reg-input{position:relative;}
+.reg-input svg{
+  position:absolute;left:16px;top:50%;width:19px;height:19px;margin-top:-9.5px;
+  color:var(--ink-4);pointer-events:none;transition:color .15s ease;
+}
+.reg-field .reg-input input{padding-left:46px;}
+.reg-input:focus-within svg{color:var(--brand);}
+.reg-input:has(.is-invalid) svg{color:var(--danger-edge);}
+
+.reg-err{
+  display:flex;align-items:center;gap:6px;margin-top:8px;
+  font-size:13px;font-weight:500;color:var(--danger);
+  animation:reg-err-in .2s ease both;
+}
+.reg-err::before{
+  content:'!';flex:none;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;
+  font-size:11px;font-weight:700;line-height:1;color:#fff;background:var(--danger-edge);
+}
+.reg-err[hidden]{display:none;}
+@keyframes reg-err-in{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:none;}}
 
 /* Radio inputs stay in the DOM — focusable, validatable — but the card is what you see. */
 .reg-choice input,
@@ -191,7 +232,7 @@ legend{padding:0;}
   border:1.5px solid var(--edge-strong);border-radius:14px;background:var(--paper);cursor:pointer;
   transition:border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
 }
-.reg-choice:hover{border-color:var(--edge-hover);box-shadow:0 4px 14px rgba(22,29,51,.06);}
+.reg-choice:hover{border-color:var(--edge-hover);box-shadow:0 4px 14px rgba(41,39,39,.06);}
 .reg-choice:has(:checked){border-color:var(--brand);background:var(--brand-tint);box-shadow:var(--brand-ring);}
 
 .reg-choice-icon{
@@ -302,10 +343,16 @@ legend{padding:0;}
 
 .reg-btn-primary{
   margin-left:auto;min-width:160px;color:#fff;background:var(--brand);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 6px 18px rgba(51,70,211,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 6px 18px rgba(207,32,48,.28);
 }
-.reg-btn-primary:hover{background:var(--brand-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 8px 22px rgba(51,70,211,.34);}
-.reg-btn-primary:disabled{opacity:.72;cursor:progress;transform:none;}
+.reg-btn-primary:hover{background:var(--brand-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 8px 22px rgba(207,32,48,.34);}
+.reg-btn-primary:disabled{opacity:.85;cursor:progress;transform:none;}
+.reg-btn.is-loading::before{
+  content:'';flex:none;width:17px;height:17px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  animation:reg-spin .7s linear infinite;
+}
+@keyframes reg-spin{to{transform:rotate(360deg);}}
 
 .reg-btn-ghost{padding:0 18px;color:var(--ink-2);background:var(--paper);border-color:var(--edge-strong);}
 .reg-btn-ghost:hover{color:var(--ink);background:var(--ground);border-color:var(--edge-hover);}
@@ -336,7 +383,7 @@ legend{padding:0;}
 /* ---------- Footer ---------- */
 
 .reg-foot{
-  display:flex;align-items:center;justify-content:center;gap:6px;padding:20px 16px 28px;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:20px 16px 28px;
   font-size:13px;font-weight:600;color:var(--ink-3);
 }
 .reg-foot img{display:block;height:30px;}
@@ -351,12 +398,17 @@ legend{padding:0;}
   .reg-shell{grid-template-columns:1fr;}
   .reg-hero{position:static;height:auto;padding:28px 22px 58px;}
   .reg-hero-inner{max-width:560px;}
+  .reg-logos{flex-direction:row;flex-wrap:wrap;align-items:stretch;gap:10px;margin-bottom:20px;}
+  .reg-logo{display:flex;align-items:center;padding:10px 12px;border-radius:10px;}
+  .reg-logo img{width:140px;}
   .reg-kicker{margin-bottom:12px;padding:5px 11px;font-size:10.5px;}
   .reg-title{margin-bottom:6px;font-size:28px;}
   .reg-tagline{font-size:14px;}
   .reg-steps{display:none;}
 
-  .reg-main-inner{margin-top:-30px;padding:0 12px 16px;}
+  /* Top-aligned here so the card keeps overlapping the banner. */
+  .reg-main-inner{align-items:flex-start;margin-top:-30px;padding:0 12px 8px;}
+  .reg-foot{margin-top:auto;padding:36px 20px calc(36px + env(safe-area-inset-bottom));}
   .reg-card{padding:28px 20px 24px;border-radius:20px;}
 
   /* Thumb-reach actions: the buttons ride the bottom of the screen until the card ends. */
@@ -395,6 +447,8 @@ legend{padding:0;}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
+  /* The spinner is a status, not decoration — it keeps turning, just slower. */
+  .reg-btn.is-loading::before{animation:reg-spin 1.6s linear infinite !important;}
 }
 
 @media print{

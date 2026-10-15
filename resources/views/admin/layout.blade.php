@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title') — {{ config('registration.event_name') }} admin</title>
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/png" href="{{ \App\Support\Asset::url('bni-icon.png') }}">
+  <link rel="apple-touch-icon" href="{{ \App\Support\Asset::url('apple-touch-icon.png') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap">
@@ -15,8 +16,9 @@
   <div class="adm-shell">
     <aside class="adm-side">
       <a class="adm-brand" href="{{ route('admin.registrations') }}">
-        <span class="adm-mark" aria-hidden="true">I</span>
-        <span><strong>{{ config('registration.event_name') }}</strong><small>Admin</small></span>
+        <span class="adm-logo"><img src="{{ \App\Support\Asset::url('bni-amritsar-logo.png') }}" alt="BNI Amritsar" width="900" height="182"></span>
+        <span class="adm-logo"><img src="{{ \App\Support\Asset::url('bni-invictus-logo.png') }}" alt="BNI Invictus" width="900" height="194"></span>
+        <small>Admin</small>
       </a>
 
       <nav class="adm-nav">

@@ -104,7 +104,7 @@ class RegistrationTest extends TestCase
 
         $response = $this->postJson('/register', [
             'type' => 'member',
-            'name' => 'Kashiv Seth',
+            'name' => 'Full Name',
             'business_category_id' => BusinessCategory::create(['name' => 'IT & Software'])->id,
             'chapter_id' => Chapter::create(['name' => 'Solis'])->id,
         ]);
@@ -114,15 +114,15 @@ class RegistrationTest extends TestCase
         $this->assertSame(Registration::PAYMENT_PAID, $registration->payment_status);
         Http::assertNothingSent();
 
-        $this->get(route('register.confirmed', $registration->reference))->assertOk()->assertSee('Kashiv Seth');
+        $this->get(route('register.confirmed', $registration->reference))->assertOk()->assertSee('Full Name');
     }
 
     public function test_invite_link_prefills_invited_by_and_ignores_junk(): void
     {
         $this->get('/register?invited_by=Kashiv%20Seth')
             ->assertOk()
-            ->assertSee('Kashiv Seth has invited you')
-            ->assertSee('value="Kashiv Seth"', false);
+            ->assertSee('Full Name has invited you')
+            ->assertSee('value="Full Name"', false);
 
         $this->get('/register?invited_by[]=x')->assertOk()->assertSee('Registration open');
     }

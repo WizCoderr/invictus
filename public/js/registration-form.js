@@ -81,7 +81,11 @@
 
   function show(index) {
     rebuild();
-    current = Math.max(0, Math.min(index, order.length - 1));
+    var target = Math.max(0, Math.min(index, order.length - 1));
+
+    // Lets the CSS slide the step in from the left when going back.
+    card.classList.toggle('is-back', target < current);
+    current = target;
 
     Object.keys(sections).forEach(function (key) {
       sections[key].hidden = key !== order[current];
@@ -117,6 +121,21 @@
     if (first && !(coarse && first === search)) first.focus({ preventScroll: true });
   }
 
+  function message(field) {
+    var v = field.validity;
+    if (v.valueMissing && field.dataset.missing) return field.dataset.missing;
+    if (v.valueMissing) return field.type === 'radio' ? 'Please pick one to continue.' : 'This field is required.';
+    if (v.typeMismatch && field.type === 'email') return 'Enter a valid email address, like you@company.com.';
+    return field.validationMessage;
+  }
+
+  // Restarts the shake even if the last one hasn't finished.
+  function shake(el) {
+    el.classList.remove('is-shaking');
+    void el.offsetWidth;
+    el.classList.add('is-shaking');
+  }
+
   // Marked by hand rather than :user-invalid — a submit attempt flags every field in the
   // form as touched, so steps not yet reached would arrive already red.
   function currentValid() {
@@ -126,16 +145,24 @@
       var field = fields[i];
       if (field.checkValidity()) continue;
 
-      // A styled or filtered-out radio can't anchor the browser's bubble, so say it inline.
-      var wrap = field.type === 'radio' && field.closest('.reg-field');
+      var wrap = field.closest('.reg-field');
+      var slot = wrap && wrap.querySelector('.reg-err');
 
-      if (wrap) {
-        var slot = wrap.querySelector('.reg-err');
-        slot.textContent = field.validationMessage;
+      // Said inline under the field rather than in the browser's bubble.
+      if (slot) {
+        slot.textContent = message(field);
         slot.hidden = false;
+      }
+
+      if (field.type === 'radio') {
+        shake(field.closest('.reg-list, .reg-tiles, .reg-choices') || wrap || field);
+        if (!slot) field.reportValidity();
       } else {
         field.classList.add('is-invalid');
-        field.reportValidity();
+        field.setAttribute('aria-invalid', 'true');
+        if (!slot) field.reportValidity();
+        shake(field.closest('.reg-input') || field);
+        field.focus();
       }
 
       return false;
@@ -240,10 +267,15 @@
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
+    if (btnNext.disabled) return; // already working on it
     if (!currentValid()) return;
 
     if (order[current] === '5') submit();
     else show(current + 1);
+  });
+
+  form.addEventListener('animationend', function (event) {
+    event.target.classList.remove('is-shaking');
   });
 
   form.addEventListener('pointerdown', function () { viaPointer = true; });
@@ -299,6 +331,7 @@
 
   form.addEventListener('input', function (event) {
     event.target.classList.remove('is-invalid');
+    event.target.removeAttribute('aria-invalid');
 
     var wrap = event.target.closest('.reg-field');
     var slot = wrap && wrap.querySelector('.reg-err');
@@ -322,13 +355,11 @@
     if (pendingOrder) { openCheckout(pendingOrder); return; }
 
     var original = btnNext.textContent;
-    btnNext.disabled = true;
-    btnNext.textContent = 'Please wait…';
+    busy('Processing…');
     elError.hidden = true;
 
     S.post(config.urls.store, payload()).then(function (result) {
-      btnNext.disabled = false;
-      btnNext.textContent = original;
+      busy(false, original);
 
       if (!result.ok) {
         if (!showErrors(result.body.errors || {})) {
@@ -342,8 +373,7 @@
       pendingOrder = result.body.order;
       openCheckout(pendingOrder);
     }).catch(function () {
-      btnNext.disabled = false;
-      btnNext.textContent = original;
+      busy(false, original);
       showError('Network error — please check your connection and try again.');
     });
   }
@@ -368,7 +398,7 @@
         email: form.elements.email.value.trim(),
         contact: form.elements.phone.value.trim()
       },
-      theme: { color: '#3346d3' },
+      theme: { color: '#cf2030' },
       handler: function (response) { settled = true; confirmPaid(response); },
       modal: {
         ondismiss: function () {
@@ -378,9 +408,16 @@
     }).open();
   }
 
+  // Spinner and a locked button while a request is out, so it can't be sent twice.
+  function busy(label, restore) {
+    btnNext.disabled = !!label;
+    btnNext.classList.toggle('is-loading', !!label);
+    btnNext.setAttribute('aria-busy', label ? 'true' : 'false');
+    btnNext.textContent = label || restore;
+  }
+
   function confirmPaid(response) {
-    btnNext.disabled = true;
-    btnNext.textContent = 'Confirming…';
+    busy('Confirming payment…');
 
     S.post(config.urls.paid, {
       razorpay_order_id: response.razorpay_order_id,
@@ -409,8 +446,7 @@
   function retry(orderId, tries) {
     if (tries < 20) { setTimeout(function () { pollStatus(orderId, tries + 1); }, 3000); return; }
 
-    btnNext.disabled = false;
-    btnNext.textContent = 'Pay now';
+    busy(false, 'Pay now');
     showError('We have not heard back about your payment yet. If money was taken, please contact the organiser.');
   }
 

@@ -32,7 +32,10 @@
         <label class="reg-q" for="reg_name">What's your full name?</label>
         <p class="reg-hint">We'll print it on your badge exactly as you type it.</p>
         <div class="reg-field">
-          <input type="text" id="reg_name" name="name" required autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="120" placeholder="Kashiv Seth">
+          <div class="reg-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="reg_name" data-missing="Please enter your full name." name="name" required autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="120" placeholder="Full Name">
+          </div>
           <span class="reg-err" hidden></span>
         </div>
       </section>
@@ -130,17 +133,26 @@
 
         <div class="reg-field">
           <label for="reg_phone">Mobile number</label>
-          <input type="tel" id="reg_phone" name="phone" data-required-when="visitor" autocomplete="tel" inputmode="tel" enterkeyhint="next" maxlength="20" placeholder="98765 43210">
+          <div class="reg-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            <input type="tel" id="reg_phone" data-missing="Please enter your mobile number." name="phone" data-required-when="visitor" autocomplete="tel" inputmode="tel" enterkeyhint="next" maxlength="20" placeholder="98765 43210">
+          </div>
           <span class="reg-err" hidden></span>
         </div>
         <div class="reg-field">
           <label for="reg_email">Email address</label>
-          <input type="email" id="reg_email" name="email" data-required-when="visitor" autocomplete="email" enterkeyhint="next" maxlength="120" placeholder="you@company.com">
+          <div class="reg-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+            <input type="email" id="reg_email" data-missing="Please enter your email address." name="email" data-required-when="visitor" autocomplete="email" enterkeyhint="next" maxlength="120" placeholder="you@company.com">
+          </div>
           <span class="reg-err" hidden></span>
         </div>
         <div class="reg-field">
           <label for="reg_invited_by">Invited by <span class="reg-optional">Optional</span></label>
-          <input type="text" id="reg_invited_by" name="invited_by" value="{{ $invitedBy }}" autocapitalize="words" enterkeyhint="next" maxlength="120" placeholder="Name of the member who invited you">
+          <div class="reg-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <input type="text" id="reg_invited_by" name="invited_by" value="{{ $invitedBy }}" autocapitalize="words" enterkeyhint="next" maxlength="120" placeholder="Name of the member who invited you">
+          </div>
           <span class="reg-err" hidden></span>
         </div>
       </section>

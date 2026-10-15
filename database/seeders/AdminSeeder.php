@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@invictus.test'],
+            ['email' => 'admin@example.com'],
             ['name' => 'Organiser', 'password' => Hash::make('password'), 'email_verified_at' => now()],
         );
     }
